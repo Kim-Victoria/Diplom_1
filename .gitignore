@@ -1,6 +1,6 @@
 /shelf/
 /workspace.xml
-.idea
-target/
+*.idea
+/target/
 .class
 
