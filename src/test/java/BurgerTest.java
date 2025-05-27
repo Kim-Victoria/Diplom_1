@@ -6,9 +6,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import praktikum.Bun;
 import praktikum.Burger;
 import praktikum.Ingredient;
+import praktikum.IngredientType;
 
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 import static praktikum.IngredientType.FILLING;
 import static praktikum.IngredientType.SAUCE;
 
@@ -26,6 +31,16 @@ public class BurgerTest {
     @Before
     public void setUp() {
         burger = new Burger();
+        when(mockBun.getName()).thenReturn("black bun");
+        when(mockBun.getPrice()).thenReturn(100f);
+
+        when(mockSauce.getType()).thenReturn(IngredientType.SAUCE);
+        when(mockSauce.getName()).thenReturn("hot sauce");
+        when(mockSauce.getPrice()).thenReturn(100f);
+
+        when(mockFilling.getType()).thenReturn(IngredientType.FILLING);
+        when(mockFilling.getName()).thenReturn("cutlet");
+        when(mockFilling.getPrice()).thenReturn(100f);
     }
 
     @Test
@@ -36,7 +51,6 @@ public class BurgerTest {
     @Test
     public void testAddIngredient() {
         burger.addIngredient(mockFilling);
-        assertEquals(1, burger.ingredients.size());
         assertEquals(mockFilling, burger.ingredients.get(0));
     }
 
@@ -54,39 +68,25 @@ public class BurgerTest {
         burger.addIngredient(secondIng);
 
         burger.moveIngredient(0, 1);
-        assertEquals(firstIng, burger.ingredients.get(1));
-        assertEquals(secondIng, burger.ingredients.get(0));
+        assertEquals(java.util.Arrays.asList(secondIng, firstIng), burger.ingredients);
     }
     @Test
     public void testGetPrice() {
-        Bun bun = new Bun("black bun", 100);
-        Ingredient sauce = new Ingredient(SAUCE, "hot sauce", 100F);
-        Ingredient filling = new Ingredient(FILLING, "cutlet", 100F);
-
-        burger.setBuns(bun);
-        burger.addIngredient(sauce);
-        burger.addIngredient(filling);
-
+        burger.setBuns(mockBun);
+        burger.addIngredient(mockSauce);
+        burger.addIngredient(mockFilling);
         float expectedPrice = 2 * 100 + 100 + 100;
         assertEquals(expectedPrice, burger.getPrice(), 0.001);
     }
 
     @Test
     public void testGetReceipt() {
-        Bun bun = new Bun("black bun", 100);
-        Ingredient sauce = new Ingredient(SAUCE, "hot sauce", 100F);
-        Ingredient filling = new Ingredient(FILLING, "cutlet", 100F);
-
-        burger.setBuns(bun);
-        burger.addIngredient(sauce);
-        burger.addIngredient(filling);
+        burger.setBuns(mockBun);
+        burger.addIngredient(mockSauce);
+        burger.addIngredient(mockFilling);
 
         String receipt = burger.getReceipt();
-
-        assertTrue(receipt.contains("(==== black bun ====)"));
-        assertTrue(receipt.contains("= sauce hot sauce ="));
-        assertTrue(receipt.contains("= filling cutlet ="));
         String expectedPrice = String.format("Price: %.1f", burger.getPrice());
-        assertTrue(receipt.contains(expectedPrice));
+        assertThat(receipt, allOf(containsString("(==== black bun ====)"), containsString("= sauce hot sauce ="), containsString("= filling cutlet ="), containsString(expectedPrice)));
     }
 }
