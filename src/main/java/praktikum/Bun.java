@@ -1,3 +1,4 @@
+
 package praktikum;
 
 /**
@@ -21,5 +22,4 @@ public class Bun {
     public float getPrice() {
         return price;
     }
-
 }

@@ -1,3 +1,4 @@
+
 package praktikum;
 
 import java.util.ArrayList;
@@ -53,5 +54,4 @@ public class Burger {
 
         return receipt.toString();
     }
-
 }
